@@ -13,7 +13,7 @@ const Home = () => {
   const handleDeleteBook = () => {
     setLoading(true);
     axios
-      .delete(`https://backend-crud-mern.onrender.com/${id}`)
+      .delete(`https://backend-crud-mern.onrender.com/book/${id}`)
       .then(() => {
         navigate("/");
         setLoading(false);

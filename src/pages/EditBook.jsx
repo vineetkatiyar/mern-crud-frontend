@@ -16,7 +16,7 @@ const EditBookPage = () => {
 
   useEffect(() => {
     axios
-      .get(`https://backend-crud-mern.onrender.com/${id}`)
+      .get(`https://backend-crud-mern.onrender.com/book/${id}`)
       .then((response) => {
         if (response.data) {
           setTitle(response.data.title);
@@ -39,7 +39,7 @@ const EditBookPage = () => {
     const data = { title, author, publishyear };
 
     try {
-      await axios.put(`https://backend-crud-mern.onrender.com/${id}`, data);
+      await axios.put(`https://backend-crud-mern.onrender.com/book/${id}`, data);
       navigate("/");
     } catch (error) {
       console.error("Error updating book:", error);

@@ -15,7 +15,7 @@ const ShowBookPage = () => {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(`https://backend-crud-mern.onrender.com/${id}`)
+      .get(`https://backend-crud-mern.onrender.com/book/${id}`)
       .then((response) => {
         setBook(response.data);
       })
