@@ -39,7 +39,7 @@ const CreateBookPage = () => {
 
   const handleSubmitBook = async (data) => {
     try {
-      await axios.post(`hhttps://backend-crud-mern.onrender.com`, data);
+      await axios.post(`https://backend-crud-mern.onrender.com`, data);
       navigate("/");
     } catch (error) {
       console.error("Error creating book:", error);
