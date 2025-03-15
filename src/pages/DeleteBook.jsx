@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import BackButton from "../components/BackButton";
 import Spiner from "../components/Spiner";
 
+
 const Home = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ const Home = () => {
   const handleDeleteBook = () => {
     setLoading(true);
     axios
-      .delete(`http://localhost:8000/book/${id}`)
+      .delete(`https://backend-crud-mern.onrender.com/${id}`)
       .then(() => {
         navigate("/");
         setLoading(false);

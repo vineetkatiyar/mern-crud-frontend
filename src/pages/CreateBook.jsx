@@ -6,6 +6,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
 
+
 const CreateBookPage = () => {
   const navigate = useNavigate();
 
@@ -38,7 +39,7 @@ const CreateBookPage = () => {
 
   const handleSubmitBook = async (data) => {
     try {
-      await axios.post(`http://localhost:8000/book`, data);
+      await axios.post(`hhttps://backend-crud-mern.onrender.com`, data);
       navigate("/");
     } catch (error) {
       console.error("Error creating book:", error);
@@ -52,7 +53,9 @@ const CreateBookPage = () => {
         <form onSubmit={handleSubmit(handleSubmitBook)} className="space-y-4">
           {/* Title Field */}
           <div>
-            <label htmlFor="title" className="block font-medium">Book Title:</label>
+            <label htmlFor="title" className="block font-medium">
+              Book Title:
+            </label>
             <input
               id="title"
               className="w-full border border-gray-400 px-3 py-2 rounded"
@@ -65,7 +68,9 @@ const CreateBookPage = () => {
 
           {/* Author Field */}
           <div>
-            <label htmlFor="author" className="block font-medium">Author:</label>
+            <label htmlFor="author" className="block font-medium">
+              Author:
+            </label>
             <input
               id="author"
               className="w-full border border-gray-400 px-3 py-2 rounded"
@@ -78,7 +83,9 @@ const CreateBookPage = () => {
 
           {/* Publish Year Field */}
           <div>
-            <label htmlFor="publishyear" className="block font-medium">Publish Year:</label>
+            <label htmlFor="publishyear" className="block font-medium">
+              Publish Year:
+            </label>
             <input
               id="publishyear"
               className="w-full border border-gray-400 px-3 py-2 rounded"
@@ -86,7 +93,9 @@ const CreateBookPage = () => {
               type="number"
               {...register("publishyear")}
             />
-            <p className="text-red-600 text-sm">{errors.publishyear?.message}</p>
+            <p className="text-red-600 text-sm">
+              {errors.publishyear?.message}
+            </p>
           </div>
 
           {/* Submit Button */}

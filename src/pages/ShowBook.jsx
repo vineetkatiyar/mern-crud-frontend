@@ -5,6 +5,8 @@ import BackButton from "../components/BackButton";
 import { useParams } from "react-router-dom";
 import Spiner from "../components/Spiner";
 
+const API_URL = import.meta.env.BACKEND_API_URL;
+
 const ShowBookPage = () => {
   const [book, setBook] = useState({});
   const [loading, setLoading] = useState(false);
@@ -13,7 +15,7 @@ const ShowBookPage = () => {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(`http://localhost:8000/book/${id}`)
+      .get(`https://backend-crud-mern.onrender.com/${id}`)
       .then((response) => {
         setBook(response.data);
       })
@@ -24,7 +26,7 @@ const ShowBookPage = () => {
   return (
     <div className="flex flex-col items-center p-5">
       <h1 className="text-3xl text-center">Book Details</h1>
-      
+
       <div className="border-2 border-black rounded p-2 mb-4">
         <BackButton className="bg-black text-white p-2 rounded" />
       </div>
@@ -46,13 +48,15 @@ const ShowBookPage = () => {
             {book.author || "N/A"}
           </div>
           <div>
-            <span className="text-orange-500 font-bold mr-4">Publish Year:</span>
+            <span className="text-orange-500 font-bold mr-4">
+              Publish Year:
+            </span>
             {book.publishYear || "N/A"}
-          </div>          
+          </div>
           <div>
             <span className="text-orange-500 font-bold mr-4">Last Update:</span>
             {book.updatedAt ? new Date(book.updatedAt).toString() : "N/A"}
-          </div>          
+          </div>
           <div>
             <span className="text-orange-500 font-bold mr-4">Create Date:</span>
             {book.createdAt ? new Date(book.createdAt).toString() : "N/A"}

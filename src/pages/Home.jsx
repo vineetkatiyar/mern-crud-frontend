@@ -6,6 +6,7 @@ import { BiAddToQueue } from "react-icons/bi";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
+
 const Home = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -16,7 +17,7 @@ const Home = () => {
     setError(""); // Reset error on new request
 
     axios
-      .get("http://localhost:8000/book")
+      .get(`https://backend-crud-mern.onrender.com/book`)
       .then((response) => {
         const fetchedBooks = Array.isArray(response.data)
           ? response.data
@@ -49,8 +50,12 @@ const Home = () => {
             <tr className="bg-gray-100">
               <th className="border border-gray-800 p-2">No.</th>
               <th className="border border-gray-800 p-2">Book Title</th>
-              <th className="border border-gray-800 p-2 max-md:hidden">Author</th>
-              <th className="border border-gray-800 p-2 max-md:hidden">Publish Year</th>
+              <th className="border border-gray-800 p-2 max-md:hidden">
+                Author
+              </th>
+              <th className="border border-gray-800 p-2 max-md:hidden">
+                Publish Year
+              </th>
               <th className="border border-gray-800 p-2">Actions</th>
             </tr>
           </thead>
@@ -59,8 +64,12 @@ const Home = () => {
               <tr key={book._id} className="text-center hover:bg-gray-50">
                 <td className="border border-gray-800 p-2">{index + 1}</td>
                 <td className="border border-gray-800 p-2">{book.title}</td>
-                <td className="border border-gray-800 p-2 max-md:hidden">{book.author}</td>
-                <td className="border border-gray-800 p-2 max-md:hidden">{book.publishyear}</td>
+                <td className="border border-gray-800 p-2 max-md:hidden">
+                  {book.author}
+                </td>
+                <td className="border border-gray-800 p-2 max-md:hidden">
+                  {book.publishyear}
+                </td>
                 <td className="border border-gray-800 p-2">
                   <div className="flex justify-center gap-x-3">
                     <Link to={`/showbook/${book._id}`} title="View Details">
