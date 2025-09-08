@@ -1,102 +1,185 @@
-/* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
+// src/components/EditBookPage.jsx
+import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
-
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { bookSchema } from "../../schema/bookSchema";
+import { useBookById } from "../../hooks/useGetBookById";
+import { useEditBook } from "../../hooks/useEditBook";
 
 const EditBookPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [publishyear, setPublishYear] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  // Fetch book data
+  const { data: book, isLoading, isError, error } = useBookById(id);
 
-  useEffect(() => {
-    axios
-      .get(`https://backend-crud-mern.onrender.com/book/${id}`)
-      .then((response) => {
-        if (response.data) {
-          setTitle(response.data.title);
-          setAuthor(response.data.author);
-          setPublishYear(response.data.publishyear);
-          setLoading(false);
-        } else {
-          navigate("/"); // Redirect if no book found
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching book:", error);
-        setError("Failed to fetch book details.");
-        setLoading(false);
+  // Setup update functionality
+  const updateMutation = useEditBook();
+
+  // Setup React Hook Form with Zod validation
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: zodResolver(bookSchema),
+    defaultValues: {
+      title: "",
+      author: "",
+      publishyear: undefined,
+    },
+  });
+
+  // Pre-fill form when book data loads
+  React.useEffect(() => {
+    if (book) {
+      reset({
+        title: book.title || "",
+        author: book.author || "",
+        publishyear: book.publishyear ? Number(book.publishyear) : undefined,
       });
-  }, [id, navigate]);
-
-  const handleEditBook = async (e) => {
-    e.preventDefault();
-    const data = { title, author, publishyear };
-
-    try {
-      await axios.put(`https://backend-crud-mern.onrender.com/book/${id}`, data);
-      navigate("/");
-    } catch (error) {
-      console.error("Error updating book:", error);
-      setError("Failed to update book.");
     }
+  }, [book, reset]);
+
+  // Handle form submission
+  const onSubmit = (data) => {
+    updateMutation.mutate(
+      { id, ...data },
+      {
+        onSuccess: () => {
+          navigate("/");
+        },
+      }
+    );
   };
 
-  if (loading) return <p className="text-center mt-10">Loading...</p>;
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+        <div className="text-center">
+          <p className="text-lg">Loading book details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (isError) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+        <div className="w-full max-w-md bg-white p-6 shadow-md rounded-lg text-center">
+          <h1 className="text-2xl font-semibold text-red-600 mb-4">Error</h1>
+          <p className="text-red-500 mb-4">{error.message}</p>
+          <button
+            onClick={() => navigate("/")}
+            className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+          >
+            Back to Home
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md bg-white p-6 shadow-md rounded-lg">
         <h1 className="text-3xl font-semibold text-center mb-6">Update Book</h1>
-        {error && <p className="text-red-600 text-center">{error}</p>}
-        <form onSubmit={handleEditBook} className="space-y-4">
+
+        {/* Show error if update fails */}
+        {updateMutation.isError && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            Error: {updateMutation.error.message}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Title Field */}
           <div>
-            <label className="block font-medium">Book Title:</label>
+            <label htmlFor="title" className="block font-medium mb-1">
+              Book Title:
+            </label>
             <input
-              className="w-full border border-gray-400 px-3 py-2 rounded"
+              id="title"
+              className={`w-full border px-3 py-2 rounded ${
+                errors.title ? "border-red-500" : "border-gray-400"
+              }`}
               placeholder="Enter book title"
               type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              {...register("title")}
             />
+            {errors.title && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.title.message}
+              </p>
+            )}
           </div>
 
           {/* Author Field */}
           <div>
-            <label className="block font-medium">Author:</label>
+            <label htmlFor="author" className="block font-medium mb-1">
+              Author:
+            </label>
             <input
-              className="w-full border border-gray-400 px-3 py-2 rounded"
+              id="author"
+              className={`w-full border px-3 py-2 rounded ${
+                errors.author ? "border-red-500" : "border-gray-400"
+              }`}
               placeholder="Enter author name"
               type="text"
-              value={author}
-              onChange={(e) => setAuthor(e.target.value)}
+              {...register("author")}
             />
+            {errors.author && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.author.message}
+              </p>
+            )}
           </div>
 
           {/* Publish Year Field */}
           <div>
-            <label className="block font-medium">Publish Year:</label>
+            <label htmlFor="publishyear" className="block font-medium mb-1">
+              Publish Year:
+            </label>
             <input
-              className="w-full border border-gray-400 px-3 py-2 rounded"
+              id="publishyear"
+              className={`w-full border px-3 py-2 rounded ${
+                errors.publishyear ? "border-red-500" : "border-gray-400"
+              }`}
               placeholder="Enter publish year"
               type="number"
-              value={publishyear}
-              onChange={(e) => setPublishYear(Number(e.target.value))}
+              {...register("publishyear", { valueAsNumber: true })}
             />
+            {errors.publishyear && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.publishyear.message}
+              </p>
+            )}
           </div>
 
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-orange-600 text-white font-semibold py-2 rounded hover:bg-orange-700 transition"
+            disabled={updateMutation.isLoading}
+            className={`w-full text-white font-semibold py-2 rounded transition ${
+              updateMutation.isLoading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-orange-600 hover:bg-orange-700"
+            }`}
           >
-            Edit Book
+            {updateMutation.isLoading ? "Updating..." : "Update Book"}
+          </button>
+
+          {/* Cancel Button */}
+          <button
+            type="button"
+            onClick={() => navigate("/")}
+            className="w-full bg-gray-600 text-white font-semibold py-2 rounded hover:bg-gray-700 transition mt-2"
+          >
+            Cancel
           </button>
         </form>
       </div>

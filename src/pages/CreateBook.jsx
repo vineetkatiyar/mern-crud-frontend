@@ -5,10 +5,13 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
-
+import { postBook } from "../api/bookApi";
+import { useCreateBook } from "../../hooks/useCreateBook";
 
 const CreateBookPage = () => {
   const navigate = useNavigate();
+
+  const { isLoading, isError, mutate } = useCreateBook();
 
   const schema = yup.object().shape({
     title: yup
@@ -38,13 +41,17 @@ const CreateBookPage = () => {
   });
 
   const handleSubmitBook = async (data) => {
-    try {
-      await axios.post(`https://backend-crud-mern.onrender.com/book`, data);
-      navigate("/");
-    } catch (error) {
-      console.error("Error creating book:", error);
-    }
+    mutate(data);
+    navigate("/");
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error: {isError.message}</div>;
+  }
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
